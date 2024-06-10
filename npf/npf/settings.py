@@ -130,7 +130,7 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = []
 STATIC_ROOT = Path(BASE_DIR, "static/")
 
-MEDIA_URL = "/media/"
+MEDIA_URL = "https://admin.nationalpolicyforum.com/media/"
 MEDIA_ROOT = Path(BASE_DIR, "media")
 
 CORS_ALLOW_ALL_ORIGINS = True
