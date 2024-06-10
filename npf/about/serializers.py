@@ -30,9 +30,13 @@ class OurClientSerializer(serializers.ModelSerializer):
 
 
 class ImageSerializer(serializers.ModelSerializer):
+    src = serializers.SerializerMethodField()
     class Meta:
         model = Image
         fields = ("src", "title", "description", "created_at")
+    
+    def get_src(self, obj):
+        return "https://admin.nationalpolicyforum.com"+obj.image.url
 
 
 class VideoSourceSerializer(serializers.Serializer):
@@ -45,6 +49,7 @@ class VideoSerializer(serializers.ModelSerializer):
     width = serializers.SerializerMethodField()
     height = serializers.SerializerMethodField()
     sources = serializers.SerializerMethodField()
+    poster = serializers.SerializerMethodField()
 
     class Meta:
         model = Video
@@ -58,6 +63,9 @@ class VideoSerializer(serializers.ModelSerializer):
             "created_at",
             "sources",
         )
+    
+    def get_poster(self, obj):
+        return "https://admin.nationalpolicyforum.com"+obj.poster.url
 
     def get_type(self, obj):
         return "video"
@@ -69,7 +77,7 @@ class VideoSerializer(serializers.ModelSerializer):
         return 720
 
     def get_sources(self, obj):
-        return [{"src": obj.video.url, "type": "video/mp4"}]
+        return [{"src": "https://admin.nationalpolicyforum.com"+obj.video.url, "type": "video/mp4"}]
 
 
 # donation serializer
