@@ -36,7 +36,7 @@ class ImageSerializer(serializers.ModelSerializer):
         fields = ("src", "title", "description", "created_at")
     
     def get_src(self, obj):
-        return "https://admin.nationalpolicyforum.com"+obj.image.url
+        return "https://admin.nationalpolicyforum.com"+obj.src.url
 
 
 class VideoSourceSerializer(serializers.Serializer):
