@@ -45,4 +45,10 @@ urlpatterns = [
     ),
     # top donors
     path("top-donations/", views.TopDonors.as_view(), name="top-donors"),
+    path("gallery/", views.GalleryListCreate.as_view(), name="gallery-list-create"),
+    path(
+        "gallery/<int:pk>/",
+        views.GalleryRetrieveUpdateDestroy.as_view(),
+        name="gallery-retrieve-update-destroy",
+    ),
 ]

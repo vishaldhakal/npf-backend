@@ -1,5 +1,5 @@
 from rest_framework import generics
-from .models import FAQ, Testimonial, OurTeam, OurClient, Image, Video, Donation
+from .models import FAQ, Testimonial, OurTeam, OurClient, Image, Video, Donation,Gallery
 from .serializers import (
     FAQSerializer,
     TestimonialSerializer,
@@ -8,6 +8,7 @@ from .serializers import (
     ImageSerializer,
     DonationSerializer,
     VideoSerializer,
+    GallerySerializer
 )
 
 from rest_framework.views import APIView
@@ -132,3 +133,12 @@ class TopDonors(APIView):
                 top_donors_info.append(donor_info)
 
         return Response(top_donors_info[:5])
+
+
+class GalleryListCreate(generics.ListCreateAPIView):
+    queryset = Gallery.objects.all()
+    serializer_class = GallerySerializer
+
+class GalleryRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Gallery.objects.all()
+    serializer_class = GallerySerializer

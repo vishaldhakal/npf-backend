@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import FAQ, Testimonial, OurTeam, OurClient, Video, Image, Donation
+from .models import FAQ, Testimonial, OurTeam, OurClient, Video, Image, Donation,Gallery
 
 
 class FAQSerializer(serializers.ModelSerializer):
@@ -85,3 +85,9 @@ class DonationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Donation
         fields = ["id", "name", "email", "image", "amount", "message"]
+
+
+class GallerySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Gallery
+        fields = ("title", "image", "description")
