@@ -79,7 +79,7 @@ def create_blog_slug(sender, instance, created, **kwargs):
 
 class Publication(models.Model):
     slug = models.SlugField(unique=True, null=True, blank=True)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=1000)
     is_featured = models.BooleanField(default=False)
     hero = models.FileField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -88,7 +88,7 @@ class Publication(models.Model):
     tags = models.ManyToManyField(Tag)
     cover = models.FileField()
     duration = models.CharField(max_length=20)
-    description = models.TextField(max_length=100)
+    description = models.TextField(max_length=2000)
     content = models.TextField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     pdf = models.FileField()
