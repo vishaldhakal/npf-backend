@@ -16,16 +16,6 @@ urlpatterns = [
         views.AuthorRetrieveUpdateDestroy.as_view(),
         name="author_retrieve_update_destroy",
     ),
-    path(
-        "social-links/",
-        views.SocialLinksListCreate.as_view(),
-        name="social_links_list_create",
-    ),
-    path(
-        "social-links/<int:pk>/",
-        views.SocialLinksRetrieveUpdateDestroy.as_view(),
-        name="social_links_retrieve_update_destroy",
-    ),
     path("category/", views.CategoryListCreate.as_view(), name="category_list_create"),
     path(
         "category/<int:pk>/",

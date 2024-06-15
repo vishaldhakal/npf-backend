@@ -28,10 +28,11 @@ class OurTeam(models.Model):
     role = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     photo = models.FileField()
-    facebook = models.URLField()
-    instagram = models.URLField()
-    linkedin = models.URLField()
-    twitter = models.URLField()
+    bio = models.TextField(blank=True, null=True)
+    facebook = models.URLField(blank=True, null=True)
+    instagram = models.URLField(blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+    twitter = models.URLField(blank=True, null=True)
 
     def __str__(self):
         return self.name

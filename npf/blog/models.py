@@ -14,17 +14,8 @@ class Author(models.Model):
     verified = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     rating_number = models.FloatField(default=0.0)
-    social_links = models.ForeignKey(
-        "SocialLinks", on_delete=models.SET_NULL, null=True, blank=True
-    )
     total_reviews = models.PositiveIntegerField(default=0)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-
-class SocialLinks(models.Model):
     facebook = models.URLField(null=True, blank=True)
     instagram = models.URLField(null=True, blank=True)
     linkedin = models.URLField(null=True, blank=True)
@@ -32,7 +23,7 @@ class SocialLinks(models.Model):
     whatsapp = models.URLField(null=True, blank=True)
 
     def __str__(self):
-        return self.facebook
+        return self.name
 
 
 class Category(models.Model):
@@ -52,8 +43,8 @@ class Tag(models.Model):
 
 
 class Blog(models.Model):
-    slug = models.SlugField(unique=True, null=True, blank=True)
-    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, null=True, blank=True, max_length=1000)
+    title = models.CharField(max_length=1000)
     is_featured = models.BooleanField(default=False)
     hero = models.FileField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -62,7 +53,7 @@ class Blog(models.Model):
     tags = models.ManyToManyField(Tag)
     cover = models.FileField()
     duration = models.CharField(max_length=20)
-    description = models.TextField(max_length=500)
+    description = models.TextField(max_length=2000)
     content = models.TextField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
 
@@ -78,7 +69,7 @@ def create_blog_slug(sender, instance, created, **kwargs):
 
 
 class Publication(models.Model):
-    slug = models.SlugField(unique=True, null=True, blank=True)
+    slug = models.SlugField(unique=True, null=True, blank=True, max_length=1000)
     title = models.CharField(max_length=1000)
     is_featured = models.BooleanField(default=False)
     hero = models.FileField()

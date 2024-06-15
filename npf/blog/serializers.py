@@ -1,4 +1,4 @@
-from .models import Author, SocialLinks, Category, Tag, Blog, Publication
+from .models import Author, Category, Tag, Blog, Publication
 
 from rest_framework import serializers
 
@@ -25,18 +25,12 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     def get_social_links(self, obj):
         return {
-            "facebook": obj.social_links.facebook,
-            "instagram": obj.social_links.instagram,
-            "linkedin": obj.social_links.linkedin,
-            "twitter": obj.social_links.twitter,
-            "whatsapp": obj.social_links.whatsapp,
+            "facebook": obj.facebook,
+            "instagram": obj.instagram,
+            "linkedin": obj.linkedin,
+            "twitter": obj.twitter,
+            "whatsapp": obj.whatsapp,
         }
-
-
-class SocialLinksSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SocialLinks
-        fields = "__all__"
 
 
 class CategorySerializer(serializers.ModelSerializer):
