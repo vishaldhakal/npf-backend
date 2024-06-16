@@ -39,6 +39,7 @@ class OurTeamAdmin(ModelAdmin):
                     "instagram",
                     "linkedin",
                     "twitter",
+                    "hierarchy_level",
                 )
             },
         ),

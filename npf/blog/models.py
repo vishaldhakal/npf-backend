@@ -110,6 +110,7 @@ class Event(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     location = models.CharField(max_length=100)
     event_date = models.DateField()
+    pdf = models.FileField()
 
     def __str__(self):
         return self.title

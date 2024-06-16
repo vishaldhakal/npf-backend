@@ -46,7 +46,7 @@ class TestimonialRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 
 
 class OurTeamListCreate(generics.ListCreateAPIView):
-    queryset = OurTeam.objects.all()
+    queryset = OurTeam.objects.all().order_by("hierarchy_level")
     serializer_class = OurTeamSerializer
 
 

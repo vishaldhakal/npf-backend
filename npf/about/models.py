@@ -33,9 +33,13 @@ class OurTeam(models.Model):
     instagram = models.URLField(blank=True, null=True)
     linkedin = models.URLField(blank=True, null=True)
     twitter = models.URLField(blank=True, null=True)
+    hierarchy_level = models.IntegerField(default=100)  # Add this field
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ["hierarchy_level"]  # Default ordering based on hierarchy level
 
 
 # our client model
