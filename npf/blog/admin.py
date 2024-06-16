@@ -107,6 +107,7 @@ class EventAdmin(ModelAdmin):
                     "content",
                     "author",
                     "event_date",
+                    "pdf",
                 )
             },
         ),
