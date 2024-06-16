@@ -1,8 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
-# Create your models here.
-
 
 class FAQ(models.Model):
     question = models.TextField()
@@ -16,7 +14,7 @@ class Testimonial(models.Model):
     name = models.CharField(max_length=100)
     role = models.CharField(max_length=100)
     review = models.TextField()
-    avatar = models.FileField()
+    avatar = models.ImageField(upload_to="testimonials/avatars/")
     created_at = models.DateTimeField(auto_now_add=True)
     rating_number = models.PositiveIntegerField()
 
@@ -27,25 +25,24 @@ class Testimonial(models.Model):
 class OurTeam(models.Model):
     role = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
-    photo = models.FileField()
+    photo = models.ImageField(upload_to="team/photos/")
     bio = models.TextField(blank=True, null=True)
     facebook = models.URLField(blank=True, null=True)
     instagram = models.URLField(blank=True, null=True)
     linkedin = models.URLField(blank=True, null=True)
     twitter = models.URLField(blank=True, null=True)
-    hierarchy_level = models.IntegerField(default=100)  # Add this field
+    hierarchy_level = models.IntegerField(default=100)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        ordering = ["hierarchy_level"]  # Default ordering based on hierarchy level
+        ordering = ["hierarchy_level"]
 
 
-# our client model
 class OurClient(models.Model):
     name = models.CharField(max_length=100)
-    image = models.FileField()
+    image = models.ImageField(upload_to="clients/images/")
 
     def __str__(self):
         return self.name
@@ -54,7 +51,7 @@ class OurClient(models.Model):
 class Image(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
-    src = models.FileField(upload_to="images/")
+    src = models.ImageField(upload_to="images/")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -68,14 +65,13 @@ class Video(models.Model):
         upload_to="videos/", help_text="Upload your video here", blank=True
     )
     video_url = models.URLField(blank=True)
-    poster = models.FileField(upload_to="videos/posters/")
+    poster = models.ImageField(upload_to="videos/posters/")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
 
     def clean(self):
-        super().clean()
         if not self.video and not self.video_url:
             raise ValidationError("Either video or video_url must be provided.")
         if self.video and self.video_url:
@@ -86,18 +82,10 @@ class Video(models.Model):
         super().save(*args, **kwargs)
 
 
-# model called donation that has the following fields:
-# name: CharField
-# email: EmailField
-# image = models.FileField() which can be null
-# amount: DecimalField
-# created_at: DateTimeField
-
-
 class Donation(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    image = models.FileField(null=True)
+    image = models.ImageField(upload_to="donations/images/", null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     message = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)

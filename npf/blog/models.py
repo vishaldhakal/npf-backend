@@ -10,7 +10,7 @@ class Author(models.Model):
     role = models.CharField(max_length=100)
     about = models.TextField(blank=True)
     quotes = models.TextField(blank=True)
-    avatar = models.FileField()
+    avatar = models.ImageField(upload_to="avatars/")
     verified = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     rating_number = models.FloatField(default=0.0)
@@ -28,7 +28,7 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    category_thumbnail = models.FileField()
+    category_thumbnail = models.ImageField(upload_to="category_thumbnails/")
     description = models.TextField()
 
     def __str__(self):
@@ -42,82 +42,47 @@ class Tag(models.Model):
         return self.name
 
 
-class Blog(models.Model):
+class BaseContent(models.Model):
     slug = models.SlugField(unique=True, null=True, blank=True, max_length=1000)
     title = models.CharField(max_length=1000)
     is_featured = models.BooleanField(default=False)
-    hero = models.FileField()
+    hero = models.ImageField(upload_to="heroes/")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
-    cover = models.FileField()
+    cover = models.ImageField(upload_to="covers/")
     duration = models.CharField(max_length=20)
     description = models.TextField(max_length=2000)
     content = models.TextField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
 
+    class Meta:
+        abstract = True
+
     def __str__(self):
         return self.title
+
+
+class Blog(BaseContent):
+    pass
+
+
+class Publication(BaseContent):
+    pdf = models.FileField(upload_to="pdfs/")
+
+
+class Event(BaseContent):
+    location = models.CharField(max_length=100)
+    event_date = models.DateField()
+    description = models.TextField(max_length=2000, null=True, blank=True)
+    pdf = models.FileField(upload_to="pdfs/")
 
 
 @receiver(post_save, sender=Blog)
-def create_blog_slug(sender, instance, created, **kwargs):
-    if created:
-        instance.slug = slugify(instance.title)
-        instance.save()
-
-
-class Publication(models.Model):
-    slug = models.SlugField(unique=True, null=True, blank=True, max_length=1000)
-    title = models.CharField(max_length=1000)
-    is_featured = models.BooleanField(default=False)
-    hero = models.FileField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    tags = models.ManyToManyField(Tag)
-    cover = models.FileField()
-    duration = models.CharField(max_length=20)
-    description = models.TextField(max_length=2000)
-    content = models.TextField()
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    pdf = models.FileField()
-
-    def __str__(self):
-        return self.title
-
-
 @receiver(post_save, sender=Publication)
-def create_publication_slug(sender, instance, created, **kwargs):
-    if created:
-        instance.slug = slugify(instance.title)
-        instance.save()
-
-
-class Event(models.Model):
-    slug = models.SlugField(unique=True, null=True, blank=True, max_length=1000)
-    title = models.CharField(max_length=1000)
-    hero = models.FileField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    tags = models.ManyToManyField(Tag)
-    cover = models.FileField()
-    duration = models.CharField(max_length=20)
-    description = models.TextField(max_length=2000, null=True, blank=True)
-    content = models.TextField()
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    location = models.CharField(max_length=100)
-    event_date = models.DateField()
-    pdf = models.FileField()
-
-    def __str__(self):
-        return self.title
-
-
 @receiver(post_save, sender=Event)
-def create_events_slug(sender, instance, created, **kwargs):
-    if created:
+def create_slug(sender, instance, created, **kwargs):
+    if created and not instance.slug:
         instance.slug = slugify(instance.title)
         instance.save()

@@ -97,6 +97,7 @@ class EventAdmin(ModelAdmin):
             {
                 "fields": (
                     "title",
+                    "is_featured",
                     "slug",
                     "hero",
                     "category",

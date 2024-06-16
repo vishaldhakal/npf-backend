@@ -35,7 +35,7 @@ class BlogListCreate(generics.ListCreateAPIView):
         if is_featured:
             queryset = queryset.filter(is_featured=True)
         elif is_latest:
-            queryset = queryset.order_by("-created_at")[:3]
+            queryset = queryset.order_by("-created_at")[:4]
         elif category:
             queryset = queryset.filter(category__name=category)
             if per_page:
@@ -116,7 +116,7 @@ class PublicationListCreate(generics.ListCreateAPIView):
         if is_featured:
             queryset = queryset.filter(is_featured=True)
         elif is_latest:
-            queryset = queryset.order_by("-created_at")[:3]
+            queryset = queryset.order_by("-created_at")[:4]
         elif category:
             queryset = queryset.filter(category__name=category)
             if per_page:
@@ -172,6 +172,7 @@ class EventListCreate(generics.ListCreateAPIView):
 
     def get(self, request, *args, **kwargs):
         is_latest = request.GET.get("is_latest")
+        is_featured = request.GET.get("is_featured")
         per_page = request.GET.get("per_page")
         category = request.GET.get("category")
         tag = request.GET.get("tag")
@@ -179,7 +180,9 @@ class EventListCreate(generics.ListCreateAPIView):
         queryset = self.get_queryset()
 
         if is_latest:
-            queryset = queryset.order_by("-created_at")[:3]
+            queryset = queryset.order_by("-created_at")[:4]
+        elif is_featured:
+            queryset = queryset.filter(is_featured=True)
         elif category:
             queryset = queryset.filter(category__name=category)
             if per_page:

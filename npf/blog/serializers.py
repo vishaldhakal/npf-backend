@@ -1,5 +1,4 @@
 from .models import Author, Category, Tag, Blog, Publication, Event
-
 from rest_framework import serializers
 
 
@@ -8,7 +7,6 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Author
-
         fields = [
             "id",
             "name",
@@ -42,24 +40,19 @@ class CategorySerializer(serializers.ModelSerializer):
 class CategoryNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ["name"]  # Only include the name field
+        fields = ["name"]
 
     def to_representation(self, instance):
-        # Return the name directly
         return instance.name
 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ["name"]  # Add other fields as necessary
+        fields = ["name"]
 
     def to_representation(self, instance):
-        # Return the name directly
         return instance.name
-
-
-# Blog and Publication serializers list without content and hero
 
 
 class BlogListSerializer(serializers.ModelSerializer):
@@ -167,19 +160,12 @@ class PublicationSerializer(serializers.ModelSerializer):
         return obj.tags.values_list("name", flat=True)
 
 
-# get publication name and slug only
-# create a new field which will be called as path and will be used to create the url
-# it should be like /publication/{slug}
-# i just want 8 latest publications like this
 class PublicationNameSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
 
     class Meta:
         model = Publication
-        fields = [
-            "title",
-            "path",
-        ]
+        fields = ["title", "path"]
 
     def get_path(self, obj):
         return f"/publications/{obj.slug}"
@@ -190,10 +176,7 @@ class BlogNameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Blog
-        fields = [
-            "title",
-            "path",
-        ]
+        fields = ["title", "path"]
 
     def get_path(self, obj):
         return f"/posts/{obj.slug}"
@@ -204,10 +187,7 @@ class EventNameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = [
-            "title",
-            "path",
-        ]
+        fields = ["title", "path"]
 
     def get_path(self, obj):
         return f"/events/{obj.slug}"
