@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-from .models import Author, Category, Tag, Blog, Publication
+from .models import Author, Category, Tag, Blog, Publication, Event
 from unfold.admin import ModelAdmin
 from tinymce.widgets import TinyMCE
 
@@ -75,3 +75,48 @@ class PublicationAdmin(ModelAdmin):
 
 
 admin.site.register(Publication, PublicationAdmin)
+
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = "__all__"
+        widgets = {
+            "content": TinyMCE(),
+        }
+
+
+class EventAdmin(ModelAdmin):
+    form = EventForm
+
+    readonly_fields = ("slug",)
+    # make fields on same row
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "title",
+                    "slug",
+                    "hero",
+                    "category",
+                    "tags",
+                    "cover",
+                    "duration",
+                    "description",
+                    "content",
+                    "author",
+                    "event_date",
+                )
+            },
+        ),
+    )
+
+    def get_queryset(self, request):
+        qs = super(ModelAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(author__user=request.user)
+
+
+admin.site.register(Event, EventAdmin)

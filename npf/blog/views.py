@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
-from .models import Author, Category, Tag, Blog, Publication
+from .models import Author, Category, Tag, Blog, Publication, Event
 from .serializers import (
     AuthorSerializer,
     CategorySerializer,
@@ -14,6 +14,8 @@ from .serializers import (
     PublicationListSerializer,
     PublicationNameSerializer,
     NavigationSerializer,
+    EventListSerializer,
+    EventSerializer,
 )
 
 
@@ -161,3 +163,45 @@ class NavigationView(APIView):
         if serializer.is_valid():
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EventListCreate(generics.ListCreateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventListSerializer
+    lookup_field = "slug"
+
+    def get(self, request, *args, **kwargs):
+        is_latest = request.GET.get("is_latest")
+        per_page = request.GET.get("per_page")
+        category = request.GET.get("category")
+        tag = request.GET.get("tag")
+
+        queryset = self.get_queryset()
+
+        if is_latest:
+            queryset = queryset.order_by("-created_at")[:3]
+        elif category:
+            queryset = queryset.filter(category__name=category)
+            if per_page:
+                try:
+                    per_page = int(per_page)
+                    queryset = queryset[:per_page]
+                except ValueError:
+                    pass
+        elif tag:
+            queryset = queryset.filter(tags__name=tag)
+            if per_page:
+                try:
+                    per_page = int(per_page)
+                    queryset = queryset[:per_page]
+                except ValueError:
+                    pass
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class EventRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    lookup_field = "slug"

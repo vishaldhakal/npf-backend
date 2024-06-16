@@ -1,4 +1,4 @@
-from .models import Author, Category, Tag, Blog, Publication
+from .models import Author, Category, Tag, Blog, Publication, Event
 
 from rest_framework import serializers
 
@@ -199,41 +199,24 @@ class BlogNameSerializer(serializers.ModelSerializer):
         return f"/posts/{obj.slug}"
 
 
-# create a navigation serializer which will be used to create the navigation bar
-# it should have the following fields
-# blog
-# latest blogs
-# featured blogs
-# blog categories
-# blog tags
+class EventNameSerializer(serializers.ModelSerializer):
+    path = serializers.SerializerMethodField()
 
-# publication
-# latest publications
-# featured publications
-# publication categories
-# publication tags
+    class Meta:
+        model = Event
+        fields = [
+            "title",
+            "path",
+        ]
 
-# every part should have a name and a list of items
-# for example for blog categories
-# name: blog categories
-# items: [category1, category2, category3]
-# the same goes for tags
-# for latest blogs and latest publications
-# name: latest blogs
-# items: [
-#     {
-#         title: blog1,
-#         path: /blog/${slug}
-#     },
-#     {
-#         title: blog2,
-#         path: /blog/${slug}
-#     },
+    def get_path(self, obj):
+        return f"/events/{obj.slug}"
 
 
 class NavigationSerializer(serializers.Serializer):
     blog = serializers.SerializerMethodField()
     publication = serializers.SerializerMethodField()
+    event = serializers.SerializerMethodField()
 
     def get_blog(self, obj):
         return {
@@ -245,6 +228,11 @@ class NavigationSerializer(serializers.Serializer):
         return {
             "latest_publications": self.get_latest_publications(),
             "featured_publications": self.get_featured_publications(),
+        }
+
+    def get_event(self, obj):
+        return {
+            "latest_events": self.get_latest_events(),
         }
 
     def get_latest_blogs(self):
@@ -262,3 +250,60 @@ class NavigationSerializer(serializers.Serializer):
     def get_featured_publications(self):
         publications = Publication.objects.filter(is_featured=True)
         return PublicationNameSerializer(publications, many=True).data
+
+    def get_latest_events(self):
+        events = Event.objects.all().order_by("-created_at")[:8]
+        return EventNameSerializer(events, many=True).data
+
+
+class EventListSerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+    category = serializers.CharField(source="category.name", read_only=True)
+    author = AuthorSerializer()
+
+    class Meta:
+        model = Event
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "created_at",
+            "updated_at",
+            "cover",
+            "duration",
+            "description",
+            "category",
+            "author",
+            "tags",
+        ]
+
+    def get_tags(self, obj):
+        return obj.tags.values_list("name", flat=True)
+
+
+class EventSerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+    category = serializers.CharField(source="category.name", read_only=True)
+    author = AuthorSerializer()
+
+    class Meta:
+        model = Event
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "hero",
+            "created_at",
+            "updated_at",
+            "cover",
+            "duration",
+            "description",
+            "content",
+            "category",
+            "author",
+            "tags",
+            "pdf",
+        ]
+
+    def get_tags(self, obj):
+        return obj.tags.values_list("name", flat=True)

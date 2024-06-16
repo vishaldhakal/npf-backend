@@ -93,3 +93,30 @@ def create_publication_slug(sender, instance, created, **kwargs):
     if created:
         instance.slug = slugify(instance.title)
         instance.save()
+
+
+class Event(models.Model):
+    slug = models.SlugField(unique=True, null=True, blank=True, max_length=1000)
+    title = models.CharField(max_length=1000)
+    hero = models.FileField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    tags = models.ManyToManyField(Tag)
+    cover = models.FileField()
+    duration = models.CharField(max_length=20)
+    description = models.TextField(max_length=2000, null=True, blank=True)
+    content = models.TextField()
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    location = models.CharField(max_length=100)
+    event_date = models.DateField()
+
+    def __str__(self):
+        return self.title
+
+
+@receiver(post_save, sender=Event)
+def create_events_slug(sender, instance, created, **kwargs):
+    if created:
+        instance.slug = slugify(instance.title)
+        instance.save()

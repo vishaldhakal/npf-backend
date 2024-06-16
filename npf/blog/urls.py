@@ -55,4 +55,14 @@ urlpatterns = [
         views.NavigationView.as_view(),
         name="nav_links_list_create",
     ),
+    path(
+        "events/",
+        views.EventListCreate.as_view(),
+        name="event_list_create",
+    ),
+    path(
+        "events/<str:slug>/",
+        views.EventRetrieveUpdateDestroy.as_view(),
+        name="event_retrieve_update_destroy",
+    ),
 ]
