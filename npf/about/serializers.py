@@ -26,6 +26,8 @@ class TestimonialSerializer(serializers.ModelSerializer):
 
 
 class OurTeamSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(source="role.name")
+
     class Meta:
         model = OurTeam
         fields = "__all__"
