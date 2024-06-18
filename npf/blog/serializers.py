@@ -1,6 +1,9 @@
 from .models import Author, Category, Tag, Blog, Publication, Event
 from rest_framework import serializers
 
+# serializers from about app
+from about.models import Role
+
 
 class AuthorSerializer(serializers.ModelSerializer):
     social_links = serializers.SerializerMethodField()
@@ -160,6 +163,17 @@ class PublicationSerializer(serializers.ModelSerializer):
         return obj.tags.values_list("name", flat=True)
 
 
+class RolePath(serializers.ModelSerializer):
+    path = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Role
+        fields = ["name", "path"]
+
+    def get_path(self, obj):
+        return f"/teams/{obj.name}"
+
+
 class PublicationNameSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
 
@@ -197,6 +211,12 @@ class NavigationSerializer(serializers.Serializer):
     blog = serializers.SerializerMethodField()
     publication = serializers.SerializerMethodField()
     event = serializers.SerializerMethodField()
+    our_team = serializers.SerializerMethodField()
+
+    def get_our_team(self, obj):
+        return {
+            "roles": self.get_roles(),
+        }
 
     def get_blog(self, obj):
         return {
@@ -216,24 +236,38 @@ class NavigationSerializer(serializers.Serializer):
         }
 
     def get_latest_blogs(self):
-        blogs = Blog.objects.all().order_by("-created_at")[:8]
+        blogs = Blog.objects.all().order_by("-created_at")[:6]
         return BlogNameSerializer(blogs, many=True).data
 
     def get_featured_blogs(self):
-        blogs = Blog.objects.filter(is_featured=True)
+        latest_blogs = Blog.objects.all().order_by("-created_at")[:6]
+        blogs = (
+            Blog.objects.filter(is_featured=True)
+            .order_by("-created_at")
+            .exclude(id__in=latest_blogs.values_list("id", flat=True))[:6]
+        )
         return BlogNameSerializer(blogs, many=True).data
 
     def get_latest_publications(self):
-        publications = Publication.objects.all().order_by("-created_at")[:8]
+        publications = Publication.objects.all().order_by("-created_at")[:6]
         return PublicationNameSerializer(publications, many=True).data
 
     def get_featured_publications(self):
-        publications = Publication.objects.filter(is_featured=True)
+        latest_publications = Publication.objects.all().order_by("-created_at")[:6]
+        publications = (
+            Publication.objects.filter(is_featured=True)
+            .order_by("-created_at")
+            .exclude(id__in=latest_publications.values_list("id", flat=True))[:6]
+        )
         return PublicationNameSerializer(publications, many=True).data
 
     def get_latest_events(self):
         events = Event.objects.all().order_by("-created_at")[:8]
         return EventNameSerializer(events, many=True).data
+
+    def get_roles(self):
+        roles = Role.objects.all().order_by("hierarchy_level")
+        return RolePath(roles, many=True).data
 
 
 class EventListSerializer(serializers.ModelSerializer):

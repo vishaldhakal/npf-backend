@@ -22,6 +22,7 @@ class BlogAdmin(ModelAdmin):
     form = BlogForm
     # make slug read only
     readonly_fields = ("slug",)
+    filter_horizontal = ("tags",)
     # make fields on same row
     fieldsets = (
         (
@@ -66,6 +67,32 @@ class PublicationForm(forms.ModelForm):
 
 class PublicationAdmin(ModelAdmin):
     form = PublicationForm
+
+    readonly_fields = ("slug",)
+
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "title",
+                    "is_featured",
+                    "slug",
+                    "hero",
+                    "category",
+                    "tags",
+                    "cover",
+                    "duration",
+                    "description",
+                    "content",
+                    "author",
+                    "pdf",
+                )
+            },
+        ),
+    )
+
+    filter_horizontal = ("tags",)
 
     def get_queryset(self, request):
         qs = super(ModelAdmin, self).get_queryset(request)
@@ -113,6 +140,8 @@ class EventAdmin(ModelAdmin):
             },
         ),
     )
+
+    filter_horizontal = ("tags",)
 
     def get_queryset(self, request):
         qs = super(ModelAdmin, self).get_queryset(request)
