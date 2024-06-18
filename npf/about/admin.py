@@ -1,13 +1,5 @@
 from django.contrib import admin
-from .models import (
-    FAQ,
-    Testimonial,
-    OurTeam,
-    OurClient,
-    Image,
-    Video,
-    Donation,
-)
+from .models import FAQ, Testimonial, OurTeam, OurClient, Image, Video, Donation, Role
 from unfold.admin import ModelAdmin
 from tinymce.widgets import TinyMCE
 from django import forms
@@ -48,6 +40,7 @@ class OurTeamAdmin(ModelAdmin):
 
 admin.site.register(OurTeam, OurTeamAdmin)
 admin.site.register(FAQ, ModelAdmin)
+admin.site.register(Role, ModelAdmin)
 admin.site.register(Testimonial, ModelAdmin)
 admin.site.register(OurClient, ModelAdmin)
 admin.site.register(Image, ModelAdmin)

@@ -22,8 +22,15 @@ class Testimonial(models.Model):
         return self.name
 
 
+class Role(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class OurTeam(models.Model):
-    role = models.CharField(max_length=100)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     photo = models.ImageField(upload_to="team/photos/")
     bio = models.TextField(blank=True, null=True)
