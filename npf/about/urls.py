@@ -45,4 +45,5 @@ urlpatterns = [
     ),
     # top donors
     path("top-donations/", views.TopDonors.as_view(), name="top-donors"),
+    path("roles/", views.RoleListCreate.as_view(), name="role-list-create"),
 ]

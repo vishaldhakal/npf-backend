@@ -24,9 +24,13 @@ class Testimonial(models.Model):
 
 class Role(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    hierarchy_level = models.IntegerField(default=100)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ["hierarchy_level"]
 
 
 class OurTeam(models.Model):

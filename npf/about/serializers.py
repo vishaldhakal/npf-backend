@@ -7,6 +7,7 @@ from .models import (
     Video,
     Image,
     Donation,
+    Role,
 )
 
 
@@ -31,6 +32,12 @@ class OurTeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = OurTeam
         fields = "__all__"
+
+
+class RoleNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = ["name"]
 
 
 class OurClientSerializer(serializers.ModelSerializer):

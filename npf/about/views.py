@@ -7,6 +7,7 @@ from .models import (
     Image,
     Video,
     Donation,
+    Role,
 )
 from .serializers import (
     FAQSerializer,
@@ -16,6 +17,7 @@ from .serializers import (
     ImageSerializer,
     DonationSerializer,
     VideoSerializer,
+    RoleNameSerializer,
 )
 
 from rest_framework.views import APIView
@@ -48,6 +50,17 @@ class TestimonialRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 class OurTeamListCreate(generics.ListCreateAPIView):
     queryset = OurTeam.objects.all().order_by("hierarchy_level")
     serializer_class = OurTeamSerializer
+
+
+class RoleListCreate(generics.ListCreateAPIView):
+    queryset = Role.objects.all().order_by("hierarchy_level")
+    serializer_class = RoleNameSerializer
+
+    def get(self, request, *args, **kwargs):
+        roles = self.get_queryset()
+        serializer = self.get_serializer(roles, many=True)
+        role_names = [role["name"] for role in serializer.data]
+        return Response(role_names)
 
 
 class OurTeamRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
