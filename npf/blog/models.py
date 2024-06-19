@@ -80,9 +80,26 @@ class Event(BaseContent):
     pdf = models.FileField(upload_to="pdfs/")
 
 
+class OpportunityType(models.Model):
+    slug = models.SlugField(unique=True, null=True, blank=True, max_length=1000)
+    title = models.CharField(max_length=100)
+    description = models.TextField(max_length=2000, null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+
+class Opportunity(BaseContent):
+    category = models.ForeignKey(OpportunityType, on_delete=models.CASCADE)
+    description = models.TextField(max_length=2000, null=True, blank=True)
+    pdf = models.FileField(upload_to="pdfs/")
+
+
 @receiver(post_save, sender=Blog)
 @receiver(post_save, sender=Publication)
 @receiver(post_save, sender=Event)
+@receiver(post_save, sender=Opportunity)
+@receiver(post_save, sender=OpportunityType)
 def create_slug(sender, instance, created, **kwargs):
     if created and not instance.slug:
         instance.slug = slugify(instance.title)

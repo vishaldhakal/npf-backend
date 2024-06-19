@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
-from .models import Author, Category, Tag, Blog, Publication, Event
+from .models import Author, Category, Tag, Blog, Publication, Event, Opportunity
 from .serializers import (
     AuthorSerializer,
     CategorySerializer,
@@ -16,6 +16,8 @@ from .serializers import (
     NavigationSerializer,
     EventListSerializer,
     EventSerializer,
+    OpportunitySerializer,
+    OpportunityListSerializer,
 )
 
 
@@ -207,4 +209,49 @@ class EventListCreate(generics.ListCreateAPIView):
 class EventRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+    lookup_field = "slug"
+
+
+class OpportunityListCreate(generics.ListCreateAPIView):
+    queryset = Opportunity.objects.all()
+    serializer_class = OpportunityListSerializer
+    lookup_field = "slug"
+
+    def get(self, request, *args, **kwargs):
+        is_featured = request.GET.get("is_featured")
+        is_latest = request.GET.get("is_latest")
+        per_page = request.GET.get("per_page")
+        category = request.GET.get("category")
+        tag = request.GET.get("tag")
+
+        queryset = self.get_queryset()
+
+        if is_featured:
+            queryset = queryset.filter(is_featured=True)
+        elif is_latest:
+            queryset = queryset.order_by("-created_at")[:4]
+        elif category:
+            queryset = queryset.filter(category__name=category)
+            if per_page:
+                try:
+                    per_page = int(per_page)
+                    queryset = queryset[:per_page]
+                except ValueError:
+                    pass
+        elif tag:
+            queryset = queryset.filter(tags__name=tag)
+            if per_page:
+                try:
+                    per_page = int(per_page)
+                    queryset = queryset[:per_page]
+                except ValueError:
+                    pass
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class OpportunityRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Opportunity.objects.all()
+    serializer_class = OpportunitySerializer
     lookup_field = "slug"

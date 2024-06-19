@@ -26,6 +26,23 @@ class TestimonialSerializer(serializers.ModelSerializer):
     ordering = ["-created_at"]
 
 
+class OurTeamListSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(source="role.name")
+
+    class Meta:
+        model = OurTeam
+        fields = [
+            "id",
+            "role",
+            "name",
+            "photo",
+            "facebook",
+            "instagram",
+            "linkedin",
+            "twitter",
+        ]
+
+
 class OurTeamSerializer(serializers.ModelSerializer):
     role = serializers.CharField(source="role.name")
 
@@ -37,7 +54,7 @@ class OurTeamSerializer(serializers.ModelSerializer):
 class RoleNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = ["name"]
+        fields = "__all__"
 
 
 class OurClientSerializer(serializers.ModelSerializer):

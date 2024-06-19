@@ -65,4 +65,14 @@ urlpatterns = [
         views.EventRetrieveUpdateDestroy.as_view(),
         name="event_retrieve_update_destroy",
     ),
+    path(
+        "opportunity/",
+        views.OpportunityListCreate.as_view(),
+        name="opportunity_list_create",
+    ),
+    path(
+        "opportunity/<str:slug>/",
+        views.OpportunityRetrieveUpdateDestroy.as_view(),
+        name="opportunity_retrieve_update_destroy",
+    ),
 ]

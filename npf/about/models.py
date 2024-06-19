@@ -1,5 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils.text import slugify
 
 
 class FAQ(models.Model):
@@ -23,6 +26,7 @@ class Testimonial(models.Model):
 
 
 class Role(models.Model):
+    slug = models.SlugField(unique=True, null=True, blank=True, max_length=1000)
     name = models.CharField(max_length=100, unique=True)
     hierarchy_level = models.IntegerField(default=100)
 
@@ -103,3 +107,10 @@ class Donation(models.Model):
 
     def __str__(self):
         return self.name
+
+
+@receiver(post_save, sender=Role)
+def create_slug(sender, instance, created, **kwargs):
+    if created and not instance.slug:
+        instance.slug = slugify(instance.title)
+        instance.save()

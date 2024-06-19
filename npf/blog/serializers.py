@@ -1,4 +1,13 @@
-from .models import Author, Category, Tag, Blog, Publication, Event
+from .models import (
+    Author,
+    Category,
+    Tag,
+    Blog,
+    Publication,
+    Event,
+    Opportunity,
+    OpportunityType,
+)
 from rest_framework import serializers
 
 # serializers from about app
@@ -171,7 +180,7 @@ class RolePath(serializers.ModelSerializer):
         fields = ["name", "path"]
 
     def get_path(self, obj):
-        return f"/teams/{obj.name}"
+        return f"/teams-type/{obj.slug}"
 
 
 class PublicationNameSerializer(serializers.ModelSerializer):
@@ -207,11 +216,34 @@ class EventNameSerializer(serializers.ModelSerializer):
         return f"/events/{obj.slug}"
 
 
+class OpportunityNameSerializer(serializers.ModelSerializer):
+    path = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Opportunity
+        fields = ["title", "path"]
+
+    def get_path(self, obj):
+        return f"/opportunities/{obj.slug}"
+
+
+class OpportunityTypeNameSerializer(serializers.ModelSerializer):
+    path = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OpportunityType
+        fields = ["title", "path"]
+
+    def get_path(self, obj):
+        return f"/opportunities-type/{obj.slug}"
+
+
 class NavigationSerializer(serializers.Serializer):
     blog = serializers.SerializerMethodField()
     publication = serializers.SerializerMethodField()
     event = serializers.SerializerMethodField()
     our_team = serializers.SerializerMethodField()
+    opportunity = serializers.SerializerMethodField()
 
     def get_our_team(self, obj):
         return {
@@ -233,6 +265,12 @@ class NavigationSerializer(serializers.Serializer):
     def get_event(self, obj):
         return {
             "latest_events": self.get_latest_events(),
+        }
+
+    def get_opportunity(self, obj):
+        return {
+            "latest_opportunities": self.get_latest_opportunities(),
+            "oppurtunity_types": self.get_opportunity_types(),
         }
 
     def get_latest_blogs(self):
@@ -269,6 +307,14 @@ class NavigationSerializer(serializers.Serializer):
         roles = Role.objects.all().order_by("hierarchy_level")
         return RolePath(roles, many=True).data
 
+    def get_latest_opportunities(self):
+        opportunities = Opportunity.objects.all().order_by("-created_at")[:8]
+        return OpportunityNameSerializer(opportunities, many=True).data
+
+    def get_opportunity_types(self):
+        types = OpportunityType.objects.all()
+        return OpportunityTypeNameSerializer(types, many=True).data
+
 
 class EventListSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
@@ -302,6 +348,59 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "hero",
+            "created_at",
+            "updated_at",
+            "cover",
+            "duration",
+            "description",
+            "content",
+            "category",
+            "author",
+            "tags",
+            "pdf",
+        ]
+
+    def get_tags(self, obj):
+        return obj.tags.values_list("name", flat=True)
+
+
+class OpportunityListSerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+    category = serializers.CharField(source="category.name", read_only=True)
+    author = AuthorSerializer()
+
+    class Meta:
+        model = Opportunity
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "created_at",
+            "updated_at",
+            "cover",
+            "duration",
+            "description",
+            "category",
+            "author",
+            "tags",
+        ]
+
+    def get_tags(self, obj):
+        return obj.tags.values_list("name", flat=True)
+
+
+class OpportunitySerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+    category = serializers.CharField(source="category.name", read_only=True)
+    author = AuthorSerializer()
+
+    class Meta:
+        model = Opportunity
         fields = [
             "id",
             "slug",
