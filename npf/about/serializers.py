@@ -112,12 +112,21 @@ class VideoSerializer(serializers.ModelSerializer):
         return 720
 
     def get_sources(self, obj):
-        return [
-            {
-                "src": "https://admin.nationalpolicyforum.com" + obj.video.url,
-                "type": "video/mp4",
-            }
-        ]
+        if obj.video_url:
+            return [
+                {
+                    "src": obj.video_url,
+                    "type": "video/mp4",
+                }
+            ]
+        elif obj.video:
+            return [
+                {
+                    "src": "https://admin.nationalpolicyforum.com" + obj.video.url,
+                    "type": "video/mp4",
+                }
+            ]
+        return []
 
 
 # donation serializer
