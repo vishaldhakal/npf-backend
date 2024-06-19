@@ -112,5 +112,5 @@ class Donation(models.Model):
 @receiver(post_save, sender=Role)
 def create_slug(sender, instance, created, **kwargs):
     if created and not instance.slug:
-        instance.slug = slugify(instance.title)
+        instance.slug = slugify(instance.name)
         instance.save()
