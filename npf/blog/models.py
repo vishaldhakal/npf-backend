@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -84,13 +85,43 @@ class OpportunityType(models.Model):
     slug = models.SlugField(unique=True, null=True, blank=True, max_length=1000)
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=2000, null=True, blank=True)
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        related_name="subcategories",
+        on_delete=models.CASCADE,
+    )
 
     def __str__(self):
         return self.title
 
+    def has_subcategories(self):
+        return self.subcategories.exists()
+
+    def get_subcategories(self):
+        return self.subcategories.all()
+
+    def clean(self):
+        if self.parent and self.parent == self:
+            raise ValidationError("A category cannot be its own parent.")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
 
 class Opportunity(BaseContent):
-    category = models.ForeignKey(OpportunityType, on_delete=models.CASCADE)
+    category = models.ForeignKey(
+        OpportunityType, on_delete=models.CASCADE, related_name="opportunities"
+    )
+    subcategory = models.ForeignKey(
+        OpportunityType,
+        null=True,
+        blank=True,
+        related_name="opportunities_as_subcategory",
+        on_delete=models.CASCADE,
+    )
     description = models.TextField(max_length=2000, null=True, blank=True)
     pdf = models.FileField(upload_to="pdfs/")
 

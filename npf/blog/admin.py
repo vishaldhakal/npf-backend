@@ -218,6 +218,7 @@ class OpportunityTypeAdmin(ModelAdmin):
                 "fields": (
                     "title",
                     "slug",
+                    "parent",
                     "description",
                 )
             },

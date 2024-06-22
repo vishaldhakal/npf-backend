@@ -229,13 +229,31 @@ class OpportunityNameSerializer(serializers.ModelSerializer):
 
 class OpportunityTypeNameSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
+    children = serializers.SerializerMethodField()
 
     class Meta:
         model = OpportunityType
-        fields = ["title", "path"]
+        fields = ["title", "path", "children"]
 
     def get_path(self, obj):
         return f"/opportunities-type/{obj.slug}"
+
+    def get_children(self, obj):
+        if obj.has_subcategories():
+            return [
+                {
+                    "subheader": obj.title,
+                    "items": [
+                        {
+                            "title": subcategory.title,
+                            "path": f"/opportunities-type/{subcategory.slug}",
+                        }
+                        for subcategory in obj.get_subcategories()
+                    ],
+                }
+            ]
+        else:
+            return []
 
 
 class NavigationSerializer(serializers.Serializer):
@@ -270,7 +288,7 @@ class NavigationSerializer(serializers.Serializer):
     def get_opportunity(self, obj):
         return {
             "latest_opportunities": self.get_latest_opportunities(),
-            "oppurtunity_types": self.get_opportunity_types(),
+            "opportunity_types": self.get_opportunity_types(),
         }
 
     def get_latest_blogs(self):
@@ -312,8 +330,30 @@ class NavigationSerializer(serializers.Serializer):
         return OpportunityNameSerializer(opportunities, many=True).data
 
     def get_opportunity_types(self):
-        types = OpportunityType.objects.all()
-        return OpportunityTypeNameSerializer(types, many=True).data
+        types = OpportunityType.objects.filter(parent__isnull=True)
+        data = OpportunityTypeNameSerializer(types, many=True).data
+
+        opportunity_types = {
+            "title": "Opportunities",
+            "path": "#",
+            "children": [
+                {
+                    "subheader": "Opportunities",
+                    "items": [
+                        {"title": item["title"], "path": item["path"]}
+                        for item in data
+                        if not item["children"]
+                    ],
+                }
+            ],
+        }
+
+        for item in data:
+            children = item.get("children")
+            if children:
+                opportunity_types["children"].append(children[0])
+
+        return opportunity_types
 
 
 class EventListSerializer(serializers.ModelSerializer):
