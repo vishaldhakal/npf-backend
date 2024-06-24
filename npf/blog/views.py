@@ -2,7 +2,16 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
-from .models import Author, Category, Tag, Blog, Publication, Event, Opportunity
+from .models import (
+    Author,
+    Category,
+    Tag,
+    Blog,
+    Publication,
+    Event,
+    Opportunity,
+    OpportunityType,
+)
 from .serializers import (
     AuthorSerializer,
     CategorySerializer,
@@ -18,6 +27,8 @@ from .serializers import (
     EventSerializer,
     OpportunitySerializer,
     OpportunityListSerializer,
+    OpportunityTypeNameOnlySerializer,
+    OpportunityTypeListSerializer,
 )
 
 
@@ -255,3 +266,25 @@ class OpportunityRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Opportunity.objects.all()
     serializer_class = OpportunitySerializer
     lookup_field = "slug"
+
+
+class OpportunityTypeNameListCreate(generics.ListCreateAPIView):
+    queryset = OpportunityType.objects.all()
+    serializer_class = OpportunityTypeNameOnlySerializer
+
+
+class OpportunityTypeNameRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = OpportunityType.objects.all()
+    serializer_class = OpportunityTypeNameOnlySerializer
+    lookup_field = "slug"
+
+
+class OpportunityTypeRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = OpportunityType.objects.all()
+    serializer_class = OpportunityListSerializer
+    lookup_field = "slug"
+
+
+class OpportunityTypeListCreate(generics.ListCreateAPIView):
+    queryset = OpportunityType.objects.all()
+    serializer_class = OpportunityTypeListSerializer

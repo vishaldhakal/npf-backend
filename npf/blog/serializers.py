@@ -227,6 +227,22 @@ class OpportunityNameSerializer(serializers.ModelSerializer):
         return f"/opportunities/{obj.slug}"
 
 
+class OpportunityTypeNameOnlySerializer(serializers.ModelSerializer):
+    # serialize such that i get array of strings
+    class Meta:
+        model = OpportunityType
+        fields = ["title"]
+
+    def to_representation(self, instance):
+        return instance.title
+
+
+class OpportunityTypeListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OpportunityType
+        fields = "__all__"
+
+
 class OpportunityTypeNameSerializer(serializers.ModelSerializer):
     path = serializers.SerializerMethodField()
     children = serializers.SerializerMethodField()
@@ -411,7 +427,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 class OpportunityListSerializer(serializers.ModelSerializer):
     tags = serializers.SerializerMethodField()
-    category = serializers.CharField(source="category.name", read_only=True)
+    category = OpportunityTypeNameOnlySerializer()
     author = AuthorSerializer()
 
     class Meta:
@@ -423,6 +439,7 @@ class OpportunityListSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "cover",
+            "category",
             "duration",
             "description",
             "category",
