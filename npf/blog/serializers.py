@@ -7,6 +7,7 @@ from .models import (
     Event,
     Opportunity,
     OpportunityType,
+    Jobs,
 )
 from rest_framework import serializers
 
@@ -477,3 +478,80 @@ class OpportunitySerializer(serializers.ModelSerializer):
 
     def get_tags(self, obj):
         return obj.tags.values_list("name", flat=True)
+
+
+# class Jobs(models.Model):
+#     title = models.CharField(max_length=2000)
+#     slug = models.SlugField(unique=True, null=True, blank=True, max_length=1000)
+#     description = models.TextField(max_length=2000, null=True, blank=True)
+#     location = models.CharField(max_length=2000)
+#     salary = models.CharField(max_length=2000)
+#     type = models.CharField(max_length=2000)
+#     experience = models.CharField(max_length=2000)
+#     level = models.CharField(max_length=2000)
+#     skills = models.ManyToManyField(Skills)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     cover = models.ImageField(upload_to="covers/")
+#     deadline = models.DateField()
+#     description = models.TextField(max_length=2000)
+#     content = models.TextField()
+#     urgent = models.BooleanField(default=False)
+
+#     def __str__(self):
+#         return self.title
+
+
+class JobsListSerializers(serializers.ModelSerializer):
+    skills = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Jobs
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "created_at",
+            "updated_at",
+            "cover",
+            "location",
+            "salary",
+            "type",
+            "experience",
+            "level",
+            "skills",
+            "deadline",
+            "description",
+            "urgent",
+        ]
+
+    def get_skills(self, obj):
+        return obj.skills.values_list("name", flat=True)
+
+
+class JobsSerializer(serializers.ModelSerializer):
+    skills = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Jobs
+        fields = [
+            "id",
+            "slug",
+            "title",
+            "created_at",
+            "updated_at",
+            "cover",
+            "location",
+            "salary",
+            "type",
+            "experience",
+            "level",
+            "skills",
+            "deadline",
+            "description",
+            "content",
+            "urgent",
+        ]
+
+    def get_skills(self, obj):
+        return obj.skills.values_list("name", flat=True)

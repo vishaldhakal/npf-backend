@@ -11,6 +11,7 @@ from .models import (
     Event,
     Opportunity,
     OpportunityType,
+    Jobs,
 )
 from .serializers import (
     AuthorSerializer,
@@ -29,6 +30,8 @@ from .serializers import (
     OpportunityListSerializer,
     OpportunityTypeNameOnlySerializer,
     OpportunityTypeListSerializer,
+    JobsListSerializers,
+    JobsSerializer,
 )
 
 
@@ -288,3 +291,15 @@ class OpportunityTypeRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView
 class OpportunityTypeListCreate(generics.ListCreateAPIView):
     queryset = OpportunityType.objects.all()
     serializer_class = OpportunityTypeListSerializer
+
+
+class JobsListCreate(generics.ListCreateAPIView):
+    queryset = Jobs.objects.all().filter(published=True)
+    serializer_class = JobsListSerializers
+    lookup_field = "slug"
+
+
+class JobsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Jobs.objects.all().filter(published=True)
+    serializer_class = JobsSerializer
+    lookup_field = "slug"

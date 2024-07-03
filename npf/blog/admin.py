@@ -9,6 +9,8 @@ from .models import (
     Event,
     Opportunity,
     OpportunityType,
+    Jobs,
+    Skills,
 )
 from unfold.admin import ModelAdmin
 from tinymce.widgets import TinyMCE
@@ -16,6 +18,25 @@ from tinymce.widgets import TinyMCE
 admin.site.register(Author, ModelAdmin)
 admin.site.register(Category, ModelAdmin)
 admin.site.register(Tag, ModelAdmin)
+admin.site.register(Skills, ModelAdmin)
+
+
+class JobsForm(forms.ModelForm):
+    class Meta:
+        model = Jobs
+        fields = "__all__"
+        widgets = {
+            "content": TinyMCE(),
+        }
+
+
+class JobsAdmin(ModelAdmin):
+    form = JobsForm
+
+    filter_horizontal = ("skills",)
+
+
+admin.site.register(Jobs, JobsAdmin)
 
 
 class BlogForm(forms.ModelForm):

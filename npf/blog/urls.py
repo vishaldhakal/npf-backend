@@ -95,4 +95,14 @@ urlpatterns = [
         views.OpportunityTypeRetrieveUpdateDestroy.as_view(),
         name="opportunity_type_retrieve_update_destroy",
     ),
+    path(
+        "jobs/",
+        views.JobsListCreate.as_view(),
+        name="jobs_list_create",
+    ),
+    path(
+        "jobs/<str:slug>/",
+        views.JobsRetrieveUpdateDestroy.as_view(),
+        name="jobs_retrieve_update_destroy",
+    ),
 ]
