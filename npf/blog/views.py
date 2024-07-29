@@ -34,6 +34,10 @@ from .serializers import (
     JobsSerializer,
 )
 
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
+
 
 class BlogListCreate(generics.ListCreateAPIView):
     queryset = Blog.objects.all()
@@ -303,3 +307,23 @@ class JobsRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Jobs.objects.all().filter(published=True)
     serializer_class = JobsSerializer
     lookup_field = "slug"
+
+
+@require_POST
+def increment_views(request, model_name, slug):
+    model_map = {
+        "blog": Blog,
+        "publication": Publication,
+        "event": Event,
+        "opportunity": Opportunity,
+    }
+
+    Model = model_map.get(model_name.lower())
+    if not Model:
+        return JsonResponse({"error": "Invalid model name"}, status=400)
+
+    obj = get_object_or_404(Model, slug=slug)
+    obj.views_count += 1
+    obj.save()
+
+    return JsonResponse({"views_count": obj.views_count})

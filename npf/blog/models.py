@@ -57,6 +57,7 @@ class BaseContent(models.Model):
     description = models.TextField(max_length=2000)
     content = models.TextField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    views_count = models.PositiveIntegerField(default=0)  # New field
 
     class Meta:
         abstract = True

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import increment_views
 
 # urls
 
@@ -74,6 +75,11 @@ urlpatterns = [
         "opportunity/<str:slug>/",
         views.OpportunityRetrieveUpdateDestroy.as_view(),
         name="opportunity_retrieve_update_destroy",
+    ),
+    path(
+        "api/increment-views/<str:model_name>/<slug:slug>/",
+        increment_views,
+        name="increment_views",
     ),
     path(
         "opportunity-type-name/",
