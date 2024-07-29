@@ -134,6 +134,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(BASE_DIR, "media")
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ORIGIN_ALLOW_ALL = True
 
 TINYMCE_DEFAULT_CONFIG = {
     "height": "780",
