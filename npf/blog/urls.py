@@ -77,7 +77,7 @@ urlpatterns = [
         name="opportunity_retrieve_update_destroy",
     ),
     path(
-        "api/increment-views/<str:model_name>/<slug:slug>/",
+        "increment-views/<str:model_name>/<slug:slug>/",
         increment_views,
         name="increment_views",
     ),
