@@ -72,14 +72,14 @@ class Blog(BaseContent):
 
 
 class Publication(BaseContent):
-    pdf = models.FileField(upload_to="pdfs/")
+    pdf = models.FileField(upload_to="pdfs/", blank=True, null=True)
 
 
 class Event(BaseContent):
     location = models.CharField(max_length=100)
     event_date = models.DateField()
     description = models.TextField(max_length=2000, null=True, blank=True)
-    pdf = models.FileField(upload_to="pdfs/")
+    pdf = models.FileField(upload_to="pdfs/", blank=True, null=True)
 
 
 class OpportunityType(models.Model):
