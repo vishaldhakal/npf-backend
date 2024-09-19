@@ -166,5 +166,5 @@ class Jobs(models.Model):
 @receiver(post_save, sender=Jobs)
 def create_slug(sender, instance, created, **kwargs):
     if created and not instance.slug:
-        instance.slug = slugify(instance.title, max_length=1000, separator='-', lowercase=True, allow_unicode=True)
+        instance.slug = slugify(instance.title, allow_unicode=True)
         instance.save()
