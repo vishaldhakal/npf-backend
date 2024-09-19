@@ -159,7 +159,7 @@ class Jobs(models.Model):
 
 
 def custom_slugify(text):
-    return text.lower().replace(' ', '-')
+    return text.lower().replace(' ', '-').replace(',', '')
 
 @receiver(pre_save, sender=Blog)
 @receiver(pre_save, sender=Publication)
