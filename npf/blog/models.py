@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.text import slugify
+from django.utils.text import slugify as django_slugify
 
 
 class Author(models.Model):
@@ -158,6 +158,9 @@ class Jobs(models.Model):
 
 
 
+def custom_slugify(text):
+    return text.lower().replace(' ', '-')
+
 @receiver(post_save, sender=Blog)
 @receiver(post_save, sender=Publication)
 @receiver(post_save, sender=Event)
@@ -166,5 +169,5 @@ class Jobs(models.Model):
 @receiver(post_save, sender=Jobs)
 def create_slug(sender, instance, created, **kwargs):
     if created and not instance.slug:
-        instance.slug = slugify(instance.title, allow_unicode=True)
+        instance.slug = custom_slugify(instance.title)
         instance.save()
