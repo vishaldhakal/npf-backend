@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.utils.text import slugify as django_slugify
 
@@ -161,13 +161,13 @@ class Jobs(models.Model):
 def custom_slugify(text):
     return text.lower().replace(' ', '-')
 
-@receiver(post_save, sender=Blog)
-@receiver(post_save, sender=Publication)
-@receiver(post_save, sender=Event)
-@receiver(post_save, sender=Opportunity)
-@receiver(post_save, sender=OpportunityType)
-@receiver(post_save, sender=Jobs)
-def create_slug(sender, instance, created, **kwargs):
-    if created and not instance.slug:
+@receiver(pre_save, sender=Blog)
+@receiver(pre_save, sender=Publication)
+@receiver(pre_save, sender=Event)
+@receiver(pre_save, sender=Opportunity)
+@receiver(pre_save, sender=OpportunityType)
+@receiver(pre_save, sender=Jobs)
+def update_slug(sender, instance, **kwargs):
+    if not instance.slug or instance.title != sender.objects.get(pk=instance.pk).title:
         instance.slug = custom_slugify(instance.title)
         instance.save()
