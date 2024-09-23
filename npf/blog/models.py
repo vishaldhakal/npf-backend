@@ -157,9 +157,9 @@ class Jobs(models.Model):
         return self.title
 
 
-
 def custom_slugify(text):
-    return text.lower().replace(' ', '-').replace(',', '')
+    return text.lower().replace(" ", "-").replace(",", "")
+
 
 @receiver(pre_save, sender=Blog)
 @receiver(pre_save, sender=Publication)
@@ -168,6 +168,12 @@ def custom_slugify(text):
 @receiver(pre_save, sender=OpportunityType)
 @receiver(pre_save, sender=Jobs)
 def update_slug(sender, instance, **kwargs):
-    if not instance.slug or instance.title != sender.objects.get(pk=instance.pk).title:
+    if not instance.pk:  # This is a new instance
         instance.slug = custom_slugify(instance.title)
-        instance.save()
+    elif (
+        not instance.slug or instance.title != sender.objects.get(pk=instance.pk).title
+    ):
+        instance.slug = custom_slugify(instance.title)
+
+    # Remove this line to prevent infinite recursion
+    # instance.save()
