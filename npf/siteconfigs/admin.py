@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import DonationContent
+from .models import DonationContent, NewsletterMember
 from django import forms
 from tinymce.widgets import TinyMCE
 from solo.admin import SingletonModelAdmin
@@ -26,3 +26,4 @@ class CustomDonationContentAdmin(SingletonModelAdmin, ModelAdmin):
 
 
 admin.site.register(DonationContent, CustomDonationContentAdmin)
+admin.site.register(NewsletterMember, ModelAdmin)
