@@ -1,9 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from django.utils.text import slugify as django_slugify
+import re
 
 
 class Author(models.Model):
@@ -157,8 +157,20 @@ class Jobs(models.Model):
         return self.title
 
 
-def custom_slugify(text):
-    return text.lower().replace(" ", "-").replace(",", "")
+def custom_slugify(text: str) -> str:
+    if not text:
+        return ""
+    
+    # Convert English to lowercase, leave Nepali as is
+    text = re.sub(r'[a-zA-Z]+', lambda m: m.group(0).lower(), text)
+    
+    # Remove special characters but keep Nepali, English letters, and numbers
+    text = re.sub(r'[^\u0900-\u097F\w\s-]', '', text)
+    
+    # Replace spaces and multiple hyphens with single hyphen
+    text = re.sub(r'[-\s]+', '-', text.strip())
+    
+    return text
 
 
 @receiver(pre_save, sender=Blog)
