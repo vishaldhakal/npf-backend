@@ -50,8 +50,38 @@ class BlogListCreate(generics.ListCreateAPIView):
         per_page = request.GET.get("per_page")
         category = request.GET.get("category")
         tag = request.GET.get("tag")
+        search= request.GET.get("search")
+        blog_search= request.GET.get("blog-search")
 
         queryset = self.get_queryset()
+        blogs = []
+        publications = []
+        opportunities = []
+
+        # Search for blogs
+        if search:
+            blogs_queryset = Blog.objects.filter(title__icontains=search)
+            blogs = BlogListSerializer(blogs_queryset, many=True).data
+
+            # Search for publications
+            publications_queryset = Publication.objects.filter(title__icontains=search)
+            publications = PublicationListSerializer(publications_queryset, many=True).data
+
+            # Search for opportunities
+            opportunities_queryset = Opportunity.objects.filter(title__icontains=search)
+            opportunities = OpportunityListSerializer(opportunities_queryset, many=True).data
+
+            # Combine all data into a single response
+            combined_response = {
+                "blogs": blogs,
+                "publications": publications,
+                "opportunities": opportunities,
+            }
+
+            return Response(combined_response)
+        
+        if blog_search:
+            queryset = queryset.filter(title__icontains=blog_search)
 
         if is_featured:
             queryset = queryset.filter(is_featured=True)
@@ -76,6 +106,7 @@ class BlogListCreate(generics.ListCreateAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
 
 
 class BlogRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
